@@ -1,7 +1,7 @@
 {
   "name": "pruner-arch",
-  "version": "0.8.0",
-  "description": "Pruner (Pruning Architect) — a top-down backcasting skill that designs toward a possibly-non-existent regulative ideal, fractally decomposes a problem into deterministic functional mappings y=f(x) vs contextual intelligence nodes, and treats each layer's MVP as the running control panel. An a-priori antinomy check marks ideals regulative-by-structure (hold both poles as limits, never collapse); conflicting requirements are resolved by dialectic synthesis — stripping the rigid form (Auto vs Manual) to preserve each side's essential value, then reconstructing as a semi-automated mechanism (Auto→Semi-auto: insert an intelligence gate; Manual→Semi-auto: push toil into f(x), retain judgment); f(x) is a priori (deterministic, unrevisable within a fixed rule set), f̂(x) is a posteriori (learned, revisable, drift-prone), and the rule/parameter choice is a posteriori governance. Minimization is downward: dissolve each control into f(x)/f̂(x) (naming the replacement); a control that dissolves was a phantom ideal (delete it); a control that resists — empirically (re-opening idempotent) or a priori (antinomy) — is a real contextual-intelligence gate (keep it). The skill recurses to the fixed point, keeps a per-layer Layer Log, and emits a Final Architecture Report; the supervising intelligence authorizes the full descent via the trigger and confirms the fixed point in post-run review. The control panel shrinks by deleting phantom controls; the surviving set is discovered, not designed. Conducts the dialogue in plain language. Activates on [Pruner]/pruner or 가지치기.",
+  "version": "0.9.0",
+  "description": "Top-down design skill in the factory-line picture: split a complex problem into machine / auto-tuned / human-judgment stations, mechanize what reduces, keep what resists, and descend to the bottom — the surviving human-judgment stations are the control panel. Use when asked to design or architect a complex problem top-down, or on [Pruner]/pruner/가지치기.",
   "keywords": [
     "pi-package",
     "pi-skill",
@@ -10,12 +10,12 @@
     "top-down",
     "backcasting",
     "architecture",
-    "symbolic",
-    "intelligence-gated",
+    "factory-line",
+    "control-panel",
+    "semi-automated",
+    "human-machine-allocation",
     "fixed-point",
-    "contextual-intelligence",
-    "regulative-ideal",
-    "antinomy"
+    "cognitive-load"
   ],
   "license": "MIT",
   "author": "sng2c",

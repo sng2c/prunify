@@ -1,119 +1,83 @@
 # pruner-arch
 
-> **Pruner (Pruning Architect)** — a top-down backcasting skill for the [pi](https://github.com/earendil-works/pi-coding-agent) coding agent.
+> **Pruner (Pruning Architect)** — a top-down backcasting skill for the [pi](https://github.com/earendil-works/pi-coding-agent) coding agent, told in the **factory-line** picture.
 
-A pi skill that designs toward a **possibly-non-existent regulative ideal**, fractally
-decomposes a problem into **deterministic functional mappings $y=f(x)$** vs
-**contextual intelligence nodes** ($I_{intel}$), defers the non-linear core as
-**intelligence-gated** black boxes, and **discovers — not designs — a control panel**
-as the synthesis of the minimized intelligence controls. An **a-priori antinomy check**
-marks ideals *regulative-by-structure* — hold both poles as limits, never collapse to
-either. **Conflicting requirements are resolved by dialectic synthesis** — strip the
-rigid form (Auto vs Manual) to keep each side's *essential value*, then reconstruct as
-a **semi-automated** mechanism (**Auto → Semi-auto**: insert an intelligence gate when
-total automation threatens integrity; **Manual → Semi-auto**: push deterministic toil
-into $f(x)$, retain the human only for contextual judgment). $f(x)$ is **a priori**
-(deterministic, unrevisable within a fixed rule set);
-$\hat f(x)$ is **a posteriori** (learned, revisable, drift-prone); the rule/parameter
-choice is itself a posteriori governance. It **recurses downward to the fixed point**
-(no remaining black box reduces to $y=f(x)$; every survivor resists — empirically
-idempotent or a-priori regulative-by-structure), keeps a **per-layer Layer Log**, and
-emits a **Final Architecture Report**; the supervising intelligence authorizes the full
-descent via the trigger and confirms the fixed point in post-run review.
+A pi skill that designs toward a **possibly-non-existent ideal product**, splits every
+piece into **machine stations** (same input ⇒ same output, no guessing) vs
+**auto-tuned stations** (learned/probabilistic, mostly right but drifts, needs watching)
+vs **human-judgment stations** (contextual judgment, never faked as a rule), defers the
+judgment parts as **human-judgment stations** with only an I/O contract, and **discovers
+— not designs — a control panel** as the surviving human stations. A **contradiction
+check** marks specs **unbuildable-by-structure** (hold both poles as limits, never
+collapse). **Conflicting requirements are resolved by stripping the rigid form**
+(fully-auto vs fully-manual) to keep each side's *essential value*, then reconstructing
+as a **semi-automated line** (auto→semi-auto: insert a human-judgment station when total
+automation threatens integrity; manual→semi-auto: push repetitive toil into a machine
+station, retain the human only for judgment). It **recurses downward to the bottom
+point** (no remaining human station reduces to a machine station; every survivor resists
+— empirically (re-opening yields the same judgment) or by contradiction
+(unbuildable-by-structure)), keeps a **per-layer line log**, and emits a **Final Line
+Report**; the supervising intelligence authorizes the full descent via the trigger and
+confirms the bottom point in post-run review. The control panel shrinks by deleting
+phantom human stations; the surviving set is discovered, not designed.
 
-## Core philosophy
+## v0.9.0 — spine rebuilt (factory line; small-model self-contained)
 
-- **Regulative ideal ($I_0$, possibly non-existent).** Backcast from the topmost ideal,
-  but hold it as a *regulative ideal* — it may or may not exist. Don't assume it real;
-  don't dismiss it as fake. At each layer, *test* whether it dissolves into observable
-  functional structures; only a stable, intelligence-agreed residual is a real target.
-  Building toward an ideal assumed real — when it may be a phantom — is the primary
-  semantic failure this skill prevents.
-- **Antinomy test & dialectic reconstruction (변증법적 본질 분해 및 재구성).** When
-  requirements or ideals collide (Thesis vs Antithesis), don't compromise by deleting
-  functionality or forcing a binary pick. (1) **Strip rigid forms** — separate each
-  requirement's *essential value* from its implementation form ("100% automated" vs
-  "fully manual"). (2) **Dialectic vector shifts** — **Auto → Semi-auto**: when total
-  automation threatens system integrity or hits non-linear entropy, drop the illusion
-  of 100% auto and insert a precision intelligence gate ($I_{intel}$); **Manual →
-  Semi-auto**: when manual processes cause fatigue/error, strip deterministic toil into
-  $y=f(x)$ and retain the human only for contextual judgment and accountability. (3)
-  **Regulative limit** — if constitutive realization still forces a contradiction,
-  record the antinomy (thesis/antithesis), hold both poles as regulative limits, and
-  route the residual into a semi-automated control panel. An a-priori resist signal
-  that **augments** (never replaces) the empirical idempotence test.
-- **Fractal decomposition.** At each layer, split into *Deterministic* ($y=f(x)$, a
-  priori, automatable now, same input ⇒ same output) vs *Contextual Intelligence* nodes
-  (high-entropy, non-linear domains). Prune the Deterministic; descend fractally into
-  the Intelligence Nodes until only the irreducible **core** remains. A learned or
-  probabilistic $\hat f(x)$ is **a posteriori** — revisable by new experience; its
-  "drift" *is* the revisability of the empirical, and it is **not** $f(x)$. The choice
-  of the rule set / parameter values is itself a posteriori governance, not part of
-  $f(x)$.
-- **The core is contextual intelligence & responsibility.** Not a defect to eliminate —
-  the domain of *Contextual Intelligence* (Human, AGI, or Agentic System). Deferred as
-  an intelligence-gated black box; never fabricated.
-- **The MVP is the running control panel.** At each layer, the MVP *is* the current
-  control panel — its black-box gates are the exposed intelligence controls, the rest
-  automated. The MVP and the control panel are the same object seen two ways.
-- **Minimization = deleting phantom controls (downward, not by design).** The control
-  panel is not minimized by top-down design. On descent, *test* each control (each
-  deferred ideal): if it **dissolves** into $f(x)$ (or $\hat f(x)$), it was a *phantom
-  ideal* — **delete** it (naming the replacement); if it **resists dissolution** —
-  empirically (re-opening idempotent) or a priori (antinomy) — it is a *real*
-  intelligence-control gate — **keep** it. The panel shrinks by deleting phantom
-  controls; the surviving set is *discovered*, not designed. The goal is not full
-  automation; it is *minimal, surgical intelligence control*.
-- **Symbolic relational expression** and **semantic-failure control** round out the
-  discipline (no domain-dependent everyday language; guard against "no code error, but
-  the outcome drifts wrong", including the drift from filing a $\hat f(x)$ as $f(x)$).
+Through v0.8.x the skill used Kant (a priori / regulative ideal) · Peirce (empirical
+test) · Hegel (dialectic) terminology as a **borrowed spine** — it took the precision
+devices already living in a large model's common sense for free. The effect was
+validated, but it also surfaced that, because those terms' meaning depends on the model's
+background knowledge, **the skill does not run on small language models**.
 
-## What it does (recursive 4-stage protocol → descent to the fixed point)
+v0.9.0 reforges the spine in a **new, self-contained language** on top of the
+**factory line** — a picture everyone (and every model) already knows. Precision now
+lives in **each primitive's "operation + self-check"**: the model performs the operation
+and answers the self-check (a yes/no), and the meaning is fixed without any background
+knowledge — so it runs on small models too. The original philosophical formulation is
+preserved verbatim in
+[`skills/pruner-arch/references/philosophy.md`](skills/pruner-arch/references/philosophy.md)
+(not required to run; for the curious about the theoretical roots).
 
-Given a topic, the trigger authorizes a **full descent to the fixed point**. The skill
-keeps a **Layer Log** and runs the 4-stage protocol once per layer ($n = 0, 1, 2, \dots$),
-descending into black boxes depth-first, until the fixed point:
+## Core concept — the factory line + 8 primitives
 
-1. **Define the regulative ideal ($I_n$), antinomy test & dialectic synthesis** —
-   suspend all real-world constraints; define the ideal as a symbolic relation; hold it
-   as *possibly non-existent*. Then the **requirement-collision & antinomy test**: does
-   $I_n$ contain internal collisions or opposing requirements ($T \leftrightarrow A$)?
-   If so, execute **dialectic breakdown** — strip the execution form (Auto vs Manual) to
-   isolate each side's *essential value*, then reconstruct into a **semi-automated
-   synthesis** (map repetitive toil to $f(x)$/$\hat f(x)$, channel core judgment to a
-   `[Contextual Intelligence Gate]`); if constitutive realization still forces a
-   contradiction, record thesis/antithesis and hold both poles as regulative limits.
-2. **Reality friction & functional boundary extraction** — collide $I_n$ (and its
-   dialectic synthesis) with reality; extract the non-linear bottlenecks that cannot be
-   mapped to deterministic $y=f(x)$;
-   separate from the automatable parts, distinguishing a-priori $f(x)$ from a-posteriori
-   $\hat f(x)$ (learned/probabilistic, revisable, own drift risk).
-3. **Black-box interface + MVP** — defer the non-linear bottleneck as
-   `[Prerequisite Black Box X]` (a contextual-intelligence node), specifying only its
-   I/O contract; wire the rest into the leanest realizable MVP (the control panel for
-   this layer).
-4. **Dissolve/resist test, record, then descend or finalize** — open each black box and
-   re-run Stages 1–3 on it: if it sheds $f(x)$/$\hat f(x)$ it was a **phantom** (delete,
-   naming the replacement); if re-opening is **idempotent** it **resists** (keep, real
-   control). An a-priori antinomy is a resist signal only when paired with this
-   empirical test. **Emit the layer's log entry**. If any kept box is still openable,
-   descend and loop; else the fixed point is reached.
+Treat the problem as one **factory line**. A station (a work seat) is one of three kinds:
+*   **Machine station** — same input ⇒ same output, no guessing or learning. Fully automatable.
+*   **Auto-tuned station** — runs automatically but learns from data, so it drifts; mostly right but needs watching. (Different from a machine station; mixing them smuggles drift in.)
+*   **Human-judgment station** — needs reading the situation and judging in context. Never faked as a rule; define only its I/O contract.
 
-> **Termination & deliverable.** Recursion ends at the fixed point — no remaining control
-> can be reduced to $y=f(x)$; every survivor resisted (empirically idempotent or
-> a-priori regulative-by-structure). The surviving set *is* the practical mechanism — a
-> **control panel** of minimized intelligence controls over a deterministic core (plus a
-> semi-automated $\hat f(x)$ layer with its own drift risk), *discovered* by deleting
-> phantom controls, not designed top-down — and delivered as the **Final Architecture
-> Report** with the full per-layer trace, for the supervising intelligence to confirm in
-> post-run review.
+**Control panel = the surviving human-judgment stations.** **Cognitive-load minimization = minimize the number of human stations.** **MVP = the current line.**
 
-## Plain-language mode (v0.8.0)
+The 8 primitives (each: operation + self-check): ① ideal-product sketch ② contradiction
+check ③ shell-stripping ④ three-bin sort ⑤ open-and-split test ⑥ bottom point ⑦ line log
+⑧ no-declaration rule. See [`SKILL.md`](skills/pruner-arch/SKILL.md) §2 for the detail.
 
-The dialogue is conducted in plain everyday language (쉬운 말 모드); each technical term
-is glossed in everyday words (or the everyday words are used alone). Precision of
-thought stays, the language barrier drops. See SKILL.md §5 for the hard-term → plain-word
-glossary (incl. antinomy, a priori, a posteriori) and the plain-language walkthrough.
+## What it does (4 stages → descent to the bottom)
+
+The trigger authorizes a **full descent to the bottom**. The skill keeps a **line log**
+and runs the 4 stages once per layer, descending into human stations depth-first:
+
+1. **Ideal-product sketch + contradiction check + shell-stripping** — suspend real-world
+   constraints and write the ideal product in one line ("buildability unverified"). A
+   contradictory spec is a managed tension (both poles as limits), not a shippable
+   product. Clashing requirements → strip the form, keep the essence → repetitive toil =
+   machine, judgment = human.
+2. **Reality friction + three-bin sort** — collide the ideal product with reality; pull
+   out "what a machine can run exactly now" vs "what needs judgment," and sort every piece
+   into machine / auto-tuned / human-judgment stations (don't mix auto-tuned into the
+   machine bin).
+3. **Human-station I/O + current line (MVP)** — defer the judgment parts as a
+   human-judgment station [B] with only an I/O contract; wire the rest into the thinnest
+   line (MVP = the control panel) you can build right now.
+4. **Open-and-split + log + descend or stop at the bottom** — open each human station and
+   re-run 1–3: if it reduces to a machine/auto-tuned station it was fake (remove, name the
+   replacement); if re-opening returns the same judgment it's real (keep). Log the layer.
+   If any kept station is still openable, descend; else the bottom is reached.
+
+> **Termination & deliverable.** At the bottom, the surviving human-judgment stations
+> *are* the control panel — minimized human-judgment seats over a machine core (plus an
+> auto-tuned layer with its own drift risk) — *discovered* by deleting fake human
+> stations, not designed top-down, and delivered as the **Final Line Report** with the
+> full per-layer trace, for the supervising intelligence to confirm in post-run review.
 
 ## Activates on
 
@@ -122,24 +86,12 @@ design a complex problem top-down.
 
 ## Anti-patterns (strict)
 
-- **No conceptual bloat** — "synergy / convergence / next-gen / complementary" rhetoric
-  fails the run.
-- **No reification of the ideal** — never treat $I_0$ (or any black-box ideal) as real
-  without testing whether it dissolves into deterministic $y=f(x)$.
-- **No fabricated fixed point** — never declare a control irreducible ("resists")
-  without an *actual* open-and-test descent that tried to derive $y=f(x)$; "I can't
-  think of how to formulate $f(x)$" is not resistance. Conversely, never dissolve a
-  control without naming the concrete $f(x)$ (or $\hat f(x)$) that replaces it. The
-  fixed point is *tested into*, never assumed.
-- **No transcendental shortcut** — an a-priori resist signal (antinomy, categorial
-  inexpressibility) must be *paired* with the empirical idempotence test, never used
-  alone. Declaring a control irreducible on purely a-priori grounds — "it is
-  structurally unconstitutable, stop" — revives the fabricated-fixed-point anti-pattern
-  in philosophical disguise. Kant diagnoses *why*; Peirce still *tests*.
-- **No descent without a record** — every descended layer is appended to the Layer Log
-  before moving on; the log is the guardrail against Semantic Drift across the recursion.
-- **No neglected non-linear nodes** — always lay down symbolic cause-and-effect
-  guardrails before and after each non-linear node to prevent Semantic Drift.
+*   **No shell rhetoric** — "synergy / convergence / next-gen / complementary" substance-free speak fails the run.
+*   **No reifying the product** — never assume the ideal product (or any human-station ideal) is real without testing whether it dissolves into machine stations.
+*   **No false bottom** — never declare a station irreducible ("real") without an *actual* open-and-split that tried to mechanize it ("I can't imagine how" is not real). Conversely, never declare a station **fake** without naming the replacement machine/auto-tuned station. The bottom is *tested into*, never declared.
+*   **No contradiction-only stop** — a contradiction-check "unbuildable" verdict counts as real only when paired with the Stage-4 empirical test; stopping on contradiction alone is the false-bottom anti-pattern in philosophical disguise.
+*   **No descent without a log** — every descended layer is written to the line log *before* moving on; the log guards against flow-leak across the recursion.
+*   **No neglected human stations** — lay down I/O-contract guardrails before and after each human-judgment station so the flow doesn't leak.
 
 ## Install (in pi)
 
@@ -164,7 +116,7 @@ Then invoke with `/skill:pruner-arch` or trigger it by typing `[Pruner]` / `가�
 ```json
 {
   "name": "pruner-arch",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "pi": { "skills": ["./skills"] }
 }
 ```
