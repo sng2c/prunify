@@ -9,126 +9,144 @@ metadata:
 
 # Skill: Pruner (Pruning Architect) — the factory-line picture
 
-## 1. Trigger Conditions
-This skill activates immediately when the user types any of the following, or requests a related task.
+## 1. Trigger Conditions & Authorization
+This skill activates immediately when the user requests top-down architecture design, or includes any of the following triggers:
 *   `[Pruner]`, `Pruner`, `pruner`
 *   `가지치기`, `가지치기 모드`
-…or when asked to design a complex problem top-down.
 
-> **Single authorization.** The trigger + topic is the one instruction that **authorizes a full descent to the bottom**. The skill then runs the recursion to completion on its own, records every layer, and emits a Final Line Report. The confirmation gate moves from *between layers* to *post-run review* of that report (§3 Termination). The user may still interrupt or redirect at any time, but the default is run-to-completion.
+> **Single Authorization Rule:** The trigger authorizes a **full recursive descent to the bottom point**. Execute all layers sequentially, log each layer in the Line Log, and present the **Final Line Report** upon reaching the bottom. Pause for user feedback only at the post-run review gate.
 
-## 2. Core Concept — the factory line + 8 primitives
+---
 
-### Carrier picture: the factory line
-Treat the problem as one **factory line**. Raw material comes in, a finished product goes out. A station (a work seat) on the line is one of three kinds:
-*   **Machine station** — same input always gives the same output, no guessing or learning. Fully automatable.
-*   **Auto-tuned station** — it runs automatically like a machine, but it learns from data, so it drifts. Mostly right but can be wrong, so it needs watching. (It is **different** from a machine station; mixing the two smuggles drift in.)
-*   **Human-judgment station** — a seat that needs reading the situation and judging in context. Never faked as a rule; define only its I/O contract and defer it.
+## 2. Core Concept — The Factory Line & 8 Primitives
 
-**Control panel = the surviving human-judgment stations.** The human-judgment stations left on the line at the end are the controls (the buttons) the operator actually touches.
-**Cognitive-load minimization = minimize the number of human stations.** Advancing the system is not adding human stations; it is removing the fake ones that didn't need a human, so the operator watches fewer seats.
-**MVP = the current line.** Each layer's MVP *is* the line so far — the human stations are the exposed controls, the rest runs as machine/auto-tuned stations. The MVP and the line are the same object seen two ways.
+### The Factory Line Model
+Decompose the entire problem as a single **factory line** consisting of three station types:
+1.  **Machine Station:** Deterministic (same input → same output), zero learning/guessing. 100% automatable.
+2.  **Auto-Tuned Station:** Automatic but probabilistic/learned from data; subject to drift. High accuracy but requires continuous monitoring. *Never mix into the machine bin.*
+3.  **Human-Judgment Station:** Requires contextual reading, trade-off steering, or legal/ethical accountability. Defined strictly by its **I/O Contract** and deferred.
 
-### The 8 primitives (each: one-line operation + one-line self-check)
-Meaning is **not** borrowed from the model's background knowledge. Each primitive is fixed by performing its *operation* and answering its *self-check* — a yes/no the model can run directly. (This is why it holds on a small model.)
+*   **Control Panel:** The surviving set of real human-judgment stations at the bottom of the line.
+*   **Cognitive-Load Minimization:** Minimizing the number of human seats by eliminating fake human stations.
+*   **MVP (Minimum Viable Product):** The current leanest line combining the machine/auto-tuned core with the exposed human control panel.
 
-1. **Ideal-product sketch** — write the best-case end-state this layer targets in one line, marked "buildability unverified," then immediately test "does this dissolve into concrete line operations?"
-   *   Self-check: did you start designing the line assuming the product is real? → fail.
-2. **Contradiction check** — when you try to write the spec tight, do "A must hold" and "A must not hold" both come out true? Then this is not "a thing you ship once" but "a tension you steer." Hold both poles as limits and put a human-judgment station between them.
-   *   Self-check: are there two requirements that are both "must"? → it's a managed tension, not a deliverable.
-3. **Shell-stripping** — for clashing requirements, strip the rigid form ("fully auto" / "fully manual") and keep only the essential value each side actually wants. Then: repetitive toil → machine station; final judgment/accountability → human-judgment station. (Total automation is dangerous → insert a human-judgment station; total manual's drudgery → push into a machine station, keep only judgment for the human.)
-   *   Self-check: did you throw one side away entirely? → fail; you must split keeping both essentials.
-4. **Three-bin sort** — put every piece into one of three: machine station / auto-tuned station / human-judgment station. Don't put auto-tuned into the machine bin.
-   *   Self-check: did you file an auto-tuned station as a machine station? → drift smuggles in, fail.
-5. **Open-and-split test** — open one human-judgment station and split it again into the three bins. If it falls into machine/auto-tuned → it was a **fake human station**: remove it from the line and **name the replacement machine (or auto-tuned station) explicitly**. If a smaller human station remains, keep descending. If re-opening keeps returning the **same human judgment** → it's a **real human station**: keep it on the line.
-   *   Self-check: you called it fake and removed it but didn't name the replacement? → empty deletion, fail.
-6. **Bottom point** — when no remaining human station can be split into a machine station (re-opening any of them just returns the same judgment), that's the bottom of the line. Stop descending.
-   *   Self-check: did you stop because "I can't think how to mechanize it"? → false bottom; you must actually open and split to claim it.
-7. **Line log** — before descending to the next layer, write down this layer's (ideal-product sketch / three-bin result / human-station I/O contracts / open-and-split result). Its job is to stop an overlooked human station from leaking the flow.
-   *   Self-check: did you descend without writing this layer in the log? → flow-leak risk, fail.
-8. **No-declaration rule** — three prohibitions: ① to call "bottom," you must have actually opened and split it; "I can't imagine it" is not allowed. ② to call "fake, remove it," you must name the replacement machine/auto-tuned station; unnamed deletion is not allowed. ③ don't start designing the line assuming the ideal product is real; always start from the split-and-test.
-   *   Self-check: is there a declaration with no attempt / no name? → all fail.
+### The 8 Primitives (Operation + Self-Check)
+Each primitive operates via a deterministic procedure and a mandatory self-check:
 
-## 3. Execution Pipeline (4 stages → descent to the bottom)
+1.  **Ideal-Product Sketch**
+    *   *Operation:* State the ideal end-state for this layer in one line, marked `[Buildability Unverified]`.
+    *   *Self-Check:* Did you design the line assuming this product already exists? → **FAIL**.
+2.  **Contradiction Check**
+    *   *Operation:* Test if tight specs force mutually exclusive "must" constraints ("A must hold" AND "A must not hold"). If true, classify it as a **managed tension** (not a single deliverable), set both poles as structural limits, and place a human-judgment station between them.
+    *   *Self-Check:* Are there two conflicting requirements that are both mandatory? → Managed tension, not a ship-once deliverable.
+3.  **Shell-Stripping**
+    *   *Operation:* Strip away rigid forms ("fully auto" vs "fully manual") from clashing requirements. Retain only essential value: push repetitive toil to **Machine Stations** and retain final judgment/accountability in **Human-Judgment Stations**.
+    *   *Self-Check:* Did you discard one side's essential value entirely? → **FAIL**.
+4.  **Three-Bin Sort**
+    *   *Operation:* Classify every component into **Machine**, **Auto-Tuned**, or **Human-Judgment** bins.
+    *   *Self-Check:* Did you place an Auto-Tuned station into the Machine bin? → **FAIL** (smuggles hidden drift).
+5.  **Open-and-Split Test**
+    *   *Operation:* Open a Human-Judgment station and attempt to split it into the three bins. If it reduces to Machine/Auto-Tuned, mark as **Fake**, remove it, and **explicitly name the replacement station**. If re-opening yields the same irreducible judgment, mark as **Real**.
+    *   *Self-Check:* Did you mark a station as fake and remove it without naming its replacement? → **FAIL**.
+6.  **Bottom Point**
+    *   *Operation:* Declare the bottom when no remaining human station can be split into machine/auto-tuned stations.
+    *   *Self-Check:* Did you stop because "I can't imagine how to mechanize it"? → **FAIL** (false bottom; must perform actual open-and-split).
+7.  **Line Log**
+    *   *Operation:* Write the per-layer entry before descending to the next layer to prevent flow leaks.
+    *   *Self-Check:* Did you descend without writing the layer log? → **FAIL**.
+8.  **No-Declaration Rule**
+    *   *Operation:* Enforce prohibitions: ① No declaring bottom without explicit open-and-split. ② No declaring fake without naming the replacement. ③ No line design assuming the ideal product is real.
+    *   *Self-Check:* Is there any declaration lacking execution proof or replacement naming? → **FAIL**.
 
-Initialize an empty **Line Log**. Then run the 4 stages **once per layer** (n = 0, 1, 2, …), descending into human stations depth-first, until the bottom.
+---
 
-### Stage 1 — Ideal-product sketch + contradiction check + shell-stripping
-*   Suspend real-world constraints (cost, tech, time) and write this layer's ideal product in one line, marked "buildability unverified." Root layer = the whole product; a deeper layer = the human station opened from above.
-*   **Contradiction check:** does the tight spec force "A must" and "A must not" both true? → managed tension; hold both poles as limits and put a human-judgment station between them. Watch for common clash pairs — openness vs safety, speed vs control, automation vs accountability, cost vs quality — and actively test for them; do not default to "no clash" just because the ideal sounds fine.
-*   **Shell-stripping:** clashing requirements → strip the form, keep the essence → repetitive toil = machine, judgment = human station.
+## 3. Execution Pipeline (Recursive Descent)
 
-### Stage 2 — Reality friction + three-bin sort
-*   Collide the ideal product (and its shell-stripped result) with reality. Pull out "what a machine can run exactly now" vs "what needs judgment."
-*   Sort every piece into the three bins: machine / auto-tuned / human-judgment station. **Don't mix auto-tuned into the machine bin** — drift smuggles in.
+Run Stages 1–4 sequentially per layer ($n = 0, 1, 2, \dots$), expanding human stations depth-first.
 
-### Stage 3 — Human-station I/O + current line (MVP)
-*   Defer the judgment-needing parts as "human-judgment station [B]" with only an **I/O contract** (what it takes in, what it puts out). Don't fill it with a fake machine function.
-*   Excluding those, submit the thinnest line (MVP) you can wire right now from machine/auto-tuned stations. This line is this layer's control panel.
+### Stage 1: Ideal-Product Sketch + Contradiction Check + Shell-Stripping
+*   Write the ideal product sketch for Layer $n$ (`[Buildability Unverified]`).
+*   Actively probe for contradictions (e.g., speed vs accuracy, openness vs security, automation vs accountability).
+*   If contradiction exists: set poles as limits, strip rigid shells to extract core values, and insert a human-judgment station.
 
-### Stage 4 — Open-and-split + log + descend or stop at the bottom
-*   Open each human station of this layer (and any inherited from above) and re-run Stages 1–3:
-    *   falls into machine/auto-tuned → **fake human station**: remove it and **name the replacement machine/auto-tuned station**. If a smaller human station remains, keep descending.
-    *   re-opening returns the same human judgment → **real human station**: keep it. (If this layer flagged a contradiction, that only counts as "real" when paired with this empirical test; never stop on contradiction alone.)
-*   Write this layer's **line-log entry** (format below).
-*   **Branch:** if any kept human station is still openable, descend to the next layer and loop to Stage 1. If none is openable (every survivor is real) → **bottom**, terminate.
+### Stage 2: Reality Friction + Three-Bin Sort
+*   Confront the ideal sketch with real-world technical/operational constraints.
+*   Sort all components into **Machine**, **Auto-Tuned**, and **Human-Judgment** bins.
 
-#### Line-log entry (emit one per visited layer)
+### Stage 3: Human-Station I/O + Current Line (MVP)
+*   Define every Human-Judgment Station $[B_{n,k}]$ strictly via its **I/O Contract**:
+    *   `Input:` Context/data received.
+    *   `Output:` Decisions/actions emitted.
+    *   `Responsibility:` What accountability remains with the human operator.
+*   Assemble the remaining core into the current operational line (MVP).
+
+### Stage 4: Open-and-Split + Line Log + Branching
+*   Apply the Open-and-Split test to each human station $[B_{n,k}]$:
+    *   **Reduced:** Mark as `Fake`, record explicit replacement station name.
+    *   **Irreducible:** Mark as `Real`, retain on the control panel.
+*   Write the **Line-Log Entry** for Layer $n$.
+*   **Branch:** If openable human stations remain, descend to Layer $n+1$. If all remaining human stations are verified `Real`, terminate recursion and emit the **Final Line Report**.
+
+---
+
+## 4. Output Specification & Log Formats
+
+### Per-Layer Line Log Template
+Emit this log entry for every visited layer $n$:
+
 ```text
-**Layer n — ideal-product sketch**
-- Ideal product (one line): …
-- Contradiction check & shell-stripping: no clash | clash [A must: … vs A must not: …] → essence extracted → re-built as [human station / limits]
-- Reality friction: …
-- Machine stations (same input = same output, no guessing; automated now): …
-- Auto-tuned stations (learned/probabilistic; mostly right but drifts, needs watching; NOT machine stations): …
-- Human-judgment stations (I/O contract each): [B_n,1] …, [B_n,2] …
-- Current line (MVP / control panel): …
-- Open-and-split result:
-  - [B_n,1] → fake (removed; replaced by machine/auto-tuned: …) | real (human station kept) | descended → layer k
-  - …
+**Layer n — Ideal-Product Sketch**
+- Ideal Product (one line): … [Buildability Unverified]
+- Contradiction Check & Shell-Stripping: 
+  - Status: [No Clash | Clash Detected]
+  - Details: [A must: … vs A must not: …]
+  - Resolution: Essence extracted → Rebuilt as [Human Station / Limits]
+- Reality Friction: …
+- Machine Stations (deterministic, no guessing): …
+- Auto-Tuned Stations (probabilistic/learned; drifts, needs monitoring): …
+- Human-Judgment Stations (I/O Contracts):
+  - [B_n,1] Input: … | Output: … | Responsibility: …
+- Current Line (MVP / Control Panel): …
+- Open-and-Split Result:
+  - [B_n,1] → [Fake (Replaced by: …) | Real (Retained) | Descended to Layer k]
 ```
 
-### Termination & Final Line Report
-When the bottom is reached — no remaining human station reduces to a machine station; every survivor is real (empirically: re-opening returns the same judgment; or by contradiction: both poles limits, unbuildable) — emit the **Final Line Report** below, then await confirmation.
+### Final Line Report Template (Deliverable)
+Emit this report upon reaching the Bottom Point:
 
 ```text
 ---
-**[Pruner] Final Line Report — bottom at layer N**
+**[Pruner] Final Line Report — Bottom Reached at Layer N**
 
-1. Bottom reached. No remaining human station reduces to a machine station; every survivor is real — empirically (re-opening returns the same judgment) or by contradiction (both poles limits, unbuildable). Those marked "unbuildable" by contradiction: [list: A must / A must not]; held as limits and managed. The human stations surviving under them are real empirically.
+1. Bottom Verification:
+   - All surviving human-judgment stations confirmed irreducible through explicit open-and-split testing or structural contradiction.
+   - Contradiction Limits Held: [List of managed tensions / limits].
 
-2. Discovered control panel (the practical mechanism):
-   - Real human-judgment stations (judgment & accountability seats):
-     - [B_a,b] — confirmed real at layer a (same on re-open) — I/O contract …
-     - …
-   - Machine core (true machine stations, accumulated across layers; same input = same output): …
-   - Auto-tuned stations (learned/probabilistic; NOT machine; drifts, needs watching): …
+2. Discovered Control Panel (Minimal Human Interface):
+   - Real Human-Judgment Stations:
+     - [B_a,b] (Confirmed Real at Layer a) — I/O Contract: …
+   - Machine Core (Accumulated deterministic stations): …
+   - Auto-Tuned Layer (Monitored probabilistic stations): …
 
-3. Removed fake human stations:
-   - [B_c,d] — confirmed fake at layer c (reduced to machine/auto-tuned: …)
-   - …
+3. Eliminated Fake Human Stations:
+   - [B_c,d] (Removed at Layer c) → Replaced by Machine/Auto-Tuned Station: [Station Name]
 
-4. Per-layer trace: the line log above, n = 0 … N.
+4. Per-Layer Trace:
+   - (Complete Line Log from Layer 0 to Layer N included above)
 
-5. Review gate. The AI's fake/real verdicts (empirical and contradiction) are provisional. Confirm the bottom here, or re-open any station where a machine/auto-tuned reduction was missed, a contradiction was mis-detected, or a human station was prematurely called fake.
-
-Awaiting instruction:
-1. Confirm the bottom and freeze the line?
-2. Re-open a specific human station and descend further?
+5. Post-Run Review Gate:
+   Awaiting user direction:
+   1) Confirm bottom and freeze line design.
+   2) Re-open specific station [Station ID] for deeper descent.
 ```
 
-## 4. Strict Constraints & Anti-Patterns
-*   **No shell rhetoric:** the moment substance-free media-speak — "synergy," "convergence," "next-gen," "complementary," etc. — appears, the run is deemed to have failed. Relational logic and functional boundaries only.
-*   **No reifying the product:** never assume the ideal product (or any human-station ideal) is real without testing whether it dissolves into machine stations. Designing a "realization" of a possibly-phantom product is a failure.
-*   **No false bottom:** never declare a station irreducible ("real") without an *actual* open-and-split that tried to derive a machine station. "I can't imagine how to mechanize it" is not real — it may be a fake you failed to crack. Conversely, never declare a station **fake** without naming the replacement machine/auto-tuned station; a deletion with no replacement is a lazy deletion. The bottom is *tested into*, never declared.
-*   **No contradiction-only stop:** a contradiction-check "unbuildable" verdict counts as real only when paired with the Stage-4 empirical test (open-and-split). Stopping on contradiction alone — "it's structurally unbuildable, stop" — is the false-bottom anti-pattern in philosophical disguise. The contradiction diagnoses *why*; the test still *happens*.
-*   **No descent without a log:** every descended layer is written to the line log *before* moving on; the log is the guardrail against flow-leak across the recursion.
-*   **No neglected human stations:** lay down I/O-contract guardrails before and after each human-judgment station so the flow doesn't leak at a non-linear seat.
-
-## 5. Communication style — plain language
-Keep the factory-line terms as the precise spine, but speak in plain everyday words. Each primitive is expanded on the fly using its §2 "operation + self-check."
-
-> One line: *"Start from the ideal-product sketch, resolve clashing requirements by stripping to essence and rebuilding as a semi-automated line, empty all repetitive toil into machines, and discover — by deleting fake human stations — the leanest line (control panel) that minimizes the operator's cognitive load; report it."*
-
 ---
-For the theoretical roots (Kant's a priori/ideal · Peirce's empirical test · Hegel's dialectic), see `references/philosophy.md`. Not required to run the skill.
+
+## 5. Strict Constraints & Anti-Patterns
+
+1.  **No Shell Rhetoric:** Media buzzwords ("synergy", "next-gen", "seamless AI", "hyper-automation") trigger instant execution failure. Use strict functional and I/O boundaries only.
+2.  **No Reifying the Ideal Product:** Never treat the ideal product as an existing entity without testing its reduction to machine stations.
+3.  **No False Bottoms:** Saying "I can't imagine how to mechanize this" is strictly forbidden. A bottom can only be claimed after an explicit open-and-split test.
+4.  **No Lazy Deletions:** Declaring a human station "fake" without naming its specific machine/auto-tuned replacement is forbidden.
+5.  **No Contradiction-Only Stops:** A contradiction diagnosis must be paired with Stage-4 empirical open-and-split validation.
+6.  **No Descent Without Logging:** Every layer must be logged before proceeding to the next layer.
