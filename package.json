@@ -1,6 +1,6 @@
 {
   "name": "pruner-arch",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Top-down design skill in the factory-line picture: split a complex problem into machine / auto-tuned / human-judgment stations, mechanize what reduces, keep what resists, and descend to the bottom — the surviving human-judgment stations are the control panel. Use when asked to design or architect a complex problem top-down, or on [Pruner]/pruner/가지치기.",
   "keywords": [
     "pi-package",

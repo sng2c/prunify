@@ -24,6 +24,19 @@ Throughout the process, a **per-layer line log** is maintained, culminating in a
 
 ---
 
+## v0.9.1 — Hardened for Mid-Size Instruct Models (Gemma 3 27B-class)
+
+v0.9.0 already made the skill self-contained for small models, but mid-size instruct models (notably **Gemma 3 27B**) still collapsed the run in three documented ways: (1) terse by default — they summarize away per-layer logs and skip self-checks; (2) "helpful shortcut" — they mark every station **Real** without attempting a replacement; (3) early negative constraints get dropped. v0.9.1 adds targeted fixes grounded in Gemma 3's known behavior:
+
+- **Worked mini-example** (§4) — a concrete 2-layer descent; few-shot is the single biggest lever for Gemma, which follows examples far better than prose rules.
+- **Output Discipline note** (§3) — forbids merging/skipping layers, forbids a Layer-0 bottom without proof, and makes "Real" require a named candidate replacement that fails.
+- **Strengthened self-checks** (Primitives 5b / 6 / 7) — phrased as "answer, then act; if Yes → FAIL: redo" to survive negation misreads.
+- **Final Self-Audit** (§6) — the most-dropped constraints restated as a last-line checklist (Gemma drops negative constraints placed early, so the critical ones live at the end).
+
+The factory-line vocabulary and 8-primitive structure are unchanged; this is robustness, not redesign. Design goal unchanged: works from small models up, now with fewer false bottoms on mid-size instruct models.
+
+---
+
 ## v0.9.0 — Spine Rebuilt (Factory Line; Self‑Contained for Small Models)
 
 Versions up to v0.8.x relied on philosophical terminology from Kant (a priori / regulative ideal), Peirce (empirical test), and Hegel (dialectic). While this "borrowed spine" worked well on large models with rich background knowledge, it failed on smaller language models that lack those conceptual foundations.
