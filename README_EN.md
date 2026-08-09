@@ -24,6 +24,18 @@ Throughout the process, a **per-layer line log** is maintained, culminating in a
 
 ---
 
+## v0.9.2 — Structural enforcement (validated on Gemma 4 31B)
+
+Live-tested on **gemma4:31b** via Ollama Cloud, v0.9.1 still had one failure: the model produced the full descent and Final Report but marked every **Real / Descend** verdict by *rationale alone* ("it needs human judgment"), never writing the candidate machine/auto-tuned replacement the self-check demanded. A self-check *question* was not enough — Gemma 4 31B follows output *templates* faithfully, so v0.9.2 makes the candidate attempt a **mandatory template field**:
+
+- The Line Log **Open-and-Split Result** is now a 3-line block per station: `Candidate replacement(s)` → `Why it fails` → `Verdict`. A verdict with no preceding Candidate line is a FAIL — making it structurally impossible to write "Real" without first attempting a concrete replacement.
+- Primitive 5, the §3 Output Discipline, and the §6 Final Self-Audit all now forbid rationale-only verdicts and require the candidate to appear in the **visible** output (not hidden reasoning) — directly countering Gemma 4's known thinking-vs-output divergence.
+- The worked example (§4) is reformatted to the new 3-line template so few-shot teaches the exact shape.
+
+Measured: on the same problem, `Candidate` mentions went 0 → 3 and every verdict carries the 3-line structure. Factory-line vocabulary and 8-primitive structure unchanged.
+
+---
+
 ## v0.9.1 — Hardened for Mid-Size Instruct Models (Gemma 3 27B-class)
 
 v0.9.0 already made the skill self-contained for small models, but mid-size instruct models (notably **Gemma 3 27B**) still collapsed the run in three documented ways: (1) terse by default — they summarize away per-layer logs and skip self-checks; (2) "helpful shortcut" — they mark every station **Real** without attempting a replacement; (3) early negative constraints get dropped. v0.9.1 adds targeted fixes grounded in Gemma 3's known behavior:
@@ -67,12 +79,12 @@ We model the problem as a single **factory line**. Each workstation (or "station
    * *Self-check*: Did you discard one side's essential value entirely? $\rightarrow$ **FAIL**.
 4. **Three‑bin sort** — Sort every component into machine, auto-tuned, or human-judgment bins. Do not file auto-tuned stations into the machine bin.
    * *Self-check*: Did you classify an auto-tuned station as a machine station? $\rightarrow$ **FAIL** (smuggles hidden drift).
-5. **Open‑and‑split test** — Open a human-judgment station and split it into the three bins. If it reduces to machine/auto-tuned, it is a **fake human station**: remove it and **explicitly name the replacement station**. If re-opening keeps returning the same judgment, it is a **real human station**: keep it.
-   * *Self-check*: Did you mark a station as fake without naming its replacement? $\rightarrow$ **FAIL**.
-6. **Bottom point** — Declared when no remaining human station can be split into a machine station (re-opening returns the same judgment). Stop descending.
-   * *Self-check*: Did you stop because "I can't think how to mechanize it"? $\rightarrow$ **FAIL** (false bottom; must perform actual open-and-split).
-7. **Line log** — Record this layer's sketch, three-bin result, human I/O contracts, and open-and-split results before descending. Prevents flow leaks.
-   * *Self-check*: Did you descend without recording this layer in the log? $\rightarrow$ **FAIL**.
+5. **Open-and-split test** — For every human-judgment station, **first write a named candidate machine/auto-tuned replacement and a one-line reason it fails** (in the visible line log). If the candidate succeeds → **fake human station** (remove it, name the replacement). If no candidate fits and it decomposes → **descend**. If no candidate fits and re-opening returns the same judgment → **real human station** (keep it). A verdict by rationale alone ("it needs human judgment") is forbidden.
+   * *Self-check*: Did you mark a station Real/Fake/Descend without a visible candidate + why-it-fails line? → **FAIL**.
+6. **Bottom point** — Declared only when every remaining human station has passed an open-and-split that **attempted a replacement** — never on impression.
+   * *Self-check*: Did you stop because "I can't think how" or because stations merely "look" human? → **FAIL** (perform an actual open-and-split on each).
+7. **Line log** — Record one entry per visited layer (sketch, three-bin result, human I/O contracts, and the 3-line open-and-split result) **before** descending. Never merge, summarize, or skip a layer.
+   * *Self-check*: Did you descend without a log entry, or merge/skip a layer? → **FAIL**.
 8. **No‑declaration rule** — Three prohibitions: ① No declaring "bottom" without an explicit open-and-split. ② No declaring "fake, remove" without naming the replacement station. ③ No line design assuming the ideal product is real.
    * *Self-check*: Is there any declaration lacking execution proof or replacement naming? $\rightarrow$ **FAIL**.
 
@@ -87,7 +99,7 @@ When triggered, the skill executes a **full recursive descent**. It maintains a 
 1. **Ideal-product sketch + contradiction check + shell-stripping** — Suspend real-world constraints and write the ideal product (`[Buildability Unverified]`). Identify contradictions (managed tensions), strip rigid forms, and extract core values.
 2. **Reality friction + three-bin sort** — Confront the ideal product with reality, separating deterministic execution from contextual judgment, then sort into machine, auto-tuned, and human-judgment bins.
 3. **Human-station I/O + current line (MVP)** — Defer judgment parts to human stations defined strictly by I/O contracts. Connect the remaining components into the thinnest operational line (MVP / Control Panel).
-4. **Open-and-split + log + descend or stop** — Open each human station. If reduced $\rightarrow$ remove as **fake** (name replacement). If irreducible $\rightarrow$ keep as **real**. Write the line log. Descend if openable human stations remain; otherwise, declare bottom and terminate.
+4. **Open-and-split + log + descend or stop** — For each human station, write a candidate machine/auto-tuned replacement + why it fails (visible). If it succeeds → remove as **fake** (name replacement). If no candidate fits and it decomposes → **descend**. If no candidate fits and irreducible → keep as **real**. Write the 3-line log per station. Descend if decomposable stations remain; otherwise, declare bottom and terminate.
 
 #### Line-Log Entry Template (Per Visited Layer)
 
@@ -102,7 +114,10 @@ When triggered, the skill executes a **full recursive descent**. It maintains a 
   - [B_n,1] Input: … | Output: … | Responsibility: …
 - Current Line (MVP / Control Panel): …
 - Open-and-Split Result:
-  - [B_n,1] → [Fake (Replaced by: …) | Real (Retained) | Descended to Layer k]
+  - [B_n,1]:
+    - Candidate replacement(s) (machine/auto-tuned, or "none fits"): …
+    - Why it/they fail (one line each): …
+    - Verdict: Fake (Replaced by: …) | Real (Retained) | Descend → Layer k
 ```
 
 #### Final Line Report (Deliverable)
@@ -143,7 +158,8 @@ When triggered, the skill executes a **full recursive descent**. It maintains a 
 
 * **No shell rhetoric** — Buzzwords such as "synergy," "convergence," "next-gen," or "hyper-automation" cause immediate execution failure.
 * **No reifying the product** — Never treat the ideal product as real without verifying its reduction to machine stations.
-* **No false bottom** — Never declare a station "real" without an actual open-and-split test ("I can't imagine how" is invalid). Never declare a station "fake" without naming its replacement.
+* **No false bottom** — Never declare a station "real"/"bottom" without an actual open-and-split that attempted a replacement ("I can't imagine how" is invalid). Never declare a station "fake" without naming its replacement.
+* **No rationale-only verdicts** — Every Real / Fake / Descend verdict must be preceded in the line log by a visible candidate machine/auto-tuned replacement + why it fails. "It needs human judgment" is not proof — attempt a concrete replacement first. (Validated on Gemma 4 31B, where this was the #1 shortcut.)
 * **No contradiction-only stop** — An "unbuildable" verdict from contradiction check is valid only when paired with Stage-4 empirical open-and-split testing.
 * **No descent without a log** — Every layer must be logged before proceeding to the next.
 * **No neglected human stations** — Enforce strict I/O contracts around human stations to prevent flow leaks.

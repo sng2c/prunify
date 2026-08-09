@@ -1,6 +1,6 @@
 ---
 name: pruner-arch
-version: "0.9.1"
+version: "0.9.2"
 description: "Top-down design skill in the factory-line picture: split a complex problem into machine / auto-tuned / human-judgment stations, mechanize what reduces, keep what resists, and descend to the bottom — the surviving human-judgment stations are the control panel. Use when asked to design or architect a complex problem top-down, or on [Pruner]/pruner/가지치기."
 metadata:
   display-name: "Pruner (Pruning Architect)"
@@ -46,10 +46,10 @@ Each primitive operates via a deterministic procedure and a mandatory self-check
     *   *Operation:* Classify every component into **Machine**, **Auto-Tuned**, or **Human-Judgment** bins.
     *   *Self-Check:* Did you place an Auto-Tuned station into the Machine bin? → **FAIL** (smuggles hidden drift).
 5.  **Open-and-Split Test**
-    *   *Operation:* Open a Human-Judgment station and attempt to split it into the three bins. If it reduces to Machine/Auto-Tuned, mark as **Fake**, remove it, and **explicitly name the replacement station**. If re-opening yields the same irreducible judgment, mark as **Real**.
+    *   *Operation:* For every Human-Judgment station, **first write a named candidate machine/auto-tuned replacement and a one-line reason it cannot do the job**, in the visible Line Log (§4). Then: if the candidate succeeds → **Fake** (remove it, name the replacement); if no candidate fits and the station decomposes into sub-stations → **Descend**; if no candidate fits and re-opening yields the same irreducible judgment → **Real**. The candidate + why-it-fails must appear in the **visible output**, not only in hidden reasoning — a verdict justified by rationale alone ("it needs human judgment") is forbidden.
     *   *Self-Check (answer each, then act):*
         *   (a) Did you mark a station Fake **without** naming its machine/auto-tuned replacement? → If Yes → **FAIL: redo, name the replacement.**
-        *   (b) Did you mark a station Real **without** first writing a candidate machine/auto-tuned replacement and a one-line reason it cannot do the job? → If Yes → **FAIL: redo the split; "looks irreducible" is not proof.**
+        *   (b) Did you mark a station Real **or Descend** without first writing a **visible** candidate replacement + why-it-fails line? → If Yes → **FAIL: redo; rationale alone ("it needs human judgment") is not proof — attempt a concrete replacement first.**
 6.  **Bottom Point**
     *   *Operation:* Declare the bottom only when every remaining human station has passed an Open-and-Split that **attempted a replacement** — never on impression.
     *   *Self-Check (answer, then act):* Did you stop because "I can't imagine how to mechanize it", or because all remaining stations merely "look" human? → If Yes → **FAIL: perform an actual Open-and-Split on each; a bottom needs proof, not impression.**
@@ -69,7 +69,7 @@ Run Stages 1–4 sequentially per layer ($n = 0, 1, 2, \dots$), expanding human 
 > **Output Discipline (mandatory on every model size — not optional "if brief"):**
 > *   **Emit, don't summarize.** Produce one full Line Log entry (§4 template) per visited layer. Never collapse several layers into one paragraph or skip a layer to save tokens.
 > *   **No Layer-0 bottom by default.** A bottom at Layer 0 is almost always a false bottom. It is valid only if the Layer-0 Three-Bin Sort named concrete components and either (a) genuinely found zero human stations (with the named machine/auto-tuned components that absorbed everything), or (b) every candidate human station was explicitly Open-and-Split with a replacement attempted.
-> *   **"Real" requires a failed replacement.** Before any station is marked Real, you must have written a candidate machine/auto-tuned replacement and a one-line reason it cannot do the job (Primitive 5b).
+> *   **Every verdict requires a visible, failed replacement.** Before any station is marked Fake / Real / Descend, write a named candidate machine/auto-tuned replacement and a one-line reason it fails, **in the Line Log** (not only in your reasoning). Rationale alone ("it needs human judgment") is forbidden — attempt a concrete replacement first. (This is the #1 shortcut mid-size instruct models take; do not take it.)
 > *   **Show the check, not just "passed".** Answer each self-check with the actual result; never reply "passed" without performing it.
 
 ### Stage 1: Ideal-Product Sketch + Contradiction Check + Shell-Stripping
@@ -115,8 +115,11 @@ Emit this log entry for every visited layer $n$:
 - Human-Judgment Stations (I/O Contracts):
   - [B_n,1] Input: … | Output: … | Responsibility: …
 - Current Line (MVP / Control Panel): …
-- Open-and-Split Result:
-  - [B_n,1] → [Fake (Replaced by: …) | Real (Retained) | Descended to Layer k]
+- Open-and-Split Result (fill ALL lines for every human station — a verdict with no Candidate line is a FAIL):
+  - [B_n,1]:
+    - Candidate replacement(s) (name ≥1 concrete machine/auto-tuned station, or "none fits"): …
+    - Why it/they fail (one line each): …
+    - Verdict: Fake (Replaced by: …) | Real (Retained) | Descend → Layer k
 ```
 
 ### Final Line Report Template (Deliverable)
@@ -162,9 +165,10 @@ Emit this report upon reaching the Bottom Point:
     - [B_0,1] Input: ticket the classifier scores below threshold | Output: final route + priority | Responsibility: a misrouted high-value ticket.
 - Current Line (MVP): keyword router + classifier auto-route high-confidence; low-confidence → [B_0,1].
 - Open-and-Split [B_0,1]:
-    - Candidate machine replacement = *"send low-confidence tickets to a queue, route by SLA rules."* → Try: SLA rules can't read a novel complaint's actual urgency; no fixed rule covers it. **fails**.
-    - Candidate auto-tuned replacement = *"retrain the classifier on more data."* → Try: improves average accuracy but cannot guarantee zero misroute of a never-seen high-value case (drift). **fails**.
-    - Both candidates fail to remove accountability. → **Descend to Layer 1.**
+    - Candidate replacement(s):
+        - (machine) *"send low-confidence tickets to a queue, route by SLA rules."* — fails: SLA rules can't read a novel complaint's actual urgency; no fixed rule covers it.
+        - (auto-tuned) *"retrain the classifier on more data."* — fails: improves average accuracy but cannot guarantee zero misroute of a never-seen high-value case (drift).
+    - Verdict: **Descend → Layer 1** (no single candidate removes accountability; the station opens into sub-stations).
 
 **Layer 1 — Ideal-Product Sketch (inside [B_0,1])**
 - Ideal Product (one line): the human only ever sees genuinely-irreducible tickets; everything else is auto-handled. [Buildability Unverified]
@@ -173,9 +177,10 @@ Emit this report upon reaching the Bottom Point:
     - Auto-Tuned: suggested-route + confidence + similar-past-ticket retrieval.
     - Human-Judgment: [B_1,1] final go/no-go on route+priority for a genuinely novel/ambiguous ticket; accountability for misroute.
 - Open-and-Split [B_1,1]:
-    - Candidate machine = *"always trust the suggested route."* → Try: the suggested route is Auto-Tuned (drifts); trusting it removes the accountability the Layer-0 clash required. **fails**.
-    - Candidate auto-tuned = *"let a second model vote."* → Try: still drifts, still no single accountable seat. **fails**.
-    - Re-opening returns the same judgment. → **Real. Retain.**
+    - Candidate replacement(s):
+        - (machine) *"always trust the suggested route."* — fails: the suggested route is Auto-Tuned (drifts); trusting it removes the accountability the Layer-0 clash required.
+        - (auto-tuned) *"let a second model vote."* — fails: still drifts, still no single accountable seat.
+    - Verdict: **Real (Retained)** (re-opening returns the same judgment; no candidate removes accountability).
 
 **Bottom reached at Layer 1.** Control panel = { [B_1,1] }. Machine core = { keyword router, SLA/timer, drafts }. Auto-Tuned = { intent classifier, retrieval }. This is the shape your output should take — one entry per layer, a replacement attempted before every Real, bottom declared only after proof. If a station had reduced to machine/auto-tuned instead, it would be marked **Fake** with its replacement named (Primitive 5a and Final Report §3).
 
@@ -197,7 +202,7 @@ Emit this report upon reaching the Bottom Point:
 Walk this list last. If any item fails, go back and fix it before reporting:
 
 - [ ] Every visited layer has its own Line Log entry (§4). No layer was merged, summarized, or skipped.
-- [ ] Every **Real** verdict was preceded by a named candidate replacement (machine or auto-tuned) and a one-line reason it cannot do the job.
+- [ ] Every **Real / Fake / Descend** verdict was preceded in the Line Log by a visible **Candidate replacement(s)** line + **Why it fails** line. No verdict was justified by rationale alone ("it needs human judgment").
 - [ ] Every **Fake** verdict names its replacement station.
 - [ ] No bottom was declared at Layer 0 unless each candidate human station was explicitly opened and reduced (or the Three-Bin Sort genuinely found zero human stations, with named components).
 - [ ] No bottom was declared on impression ("can't imagine", "looks human") — each survivor has an attempted-replacement proof.
