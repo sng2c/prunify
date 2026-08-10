@@ -1,177 +1,33 @@
-# pruner-arch
+# prunify
 
-**[English](README_EN.md)** | **[한국어](README.md)**
+> **Prunify (Pruning Architect)** — a top-down backcasting skill for the [pi](https://github.com/earendil-works/pi-coding-agent) coding agent, built on the **factory-line** metaphor. (repo: `github.com/sng2c/prunify`)
 
-> **Pruner (Pruning Architect)** — a top‑down backcasting skill for the [pi](https://github.com/earendil-works/pi-coding-agent) coding agent, built around the **factory‑line** metaphor.
+Prunify targets a potentially non-existent **ideal product**. It decomposes any problem into three station types:
 
-Pruner targets a **potentially non‑existent ideal product**. It decomposes any complex problem into three types of stations on a factory line:
+- **Machine** — deterministic (same input → same output), no learning. Fully automatable.
+- **Auto-Tuned** — automatic but learned/probabilistic; drifts, needs monitoring. Never mix into the machine bin.
+- **Human-Judgment** — needs contextual reading or accountability. Defined only by its I/O contract; deferred.
 
-- **Machine station** — deterministic (same input $\rightarrow$ same output) with zero learning or guessing. Fully automatable.
-- **Auto‑tuned station** — runs automatically but relies on data learning, so it can drift over time. Generally accurate but requires continuous monitoring. Strictly distinct from machine stations.
-- **Human‑judgment station** — requires contextual interpretation, judgment, or accountability. Cannot be replaced by fixed rules; defined solely by its I/O contract and deferred.
+For each human station it **first attempts a machine/auto-tuned replacement**; fakes (replaceable) are deleted (replacement named), reals (irreducible) are kept — discovering the **control panel**. Recurses top-down to the bottom.
 
-By deferring judgment-heavy work to **I/O-contract-bound human stations**, the surviving set of human seats constitutes the **control panel**. This control panel is **discovered** by stripping away fake human stations, not designed from scratch.
+## Core — 6 phases (do-next)
 
-A **contradiction check** identifies specifications that are **unbuildable by structure** (i.e., imposing mutually exclusive constraints). 
-
-When requirements clash, we strip away rigid forms ("fully auto" vs "fully manual"), preserve the essential value of each side, and rebuild the system as a **semi‑automated line**:
-- **Auto $\rightarrow$ semi‑auto**: Insert a human-judgment station when full automation threatens system integrity.
-- **Manual $\rightarrow$ semi‑auto**: Offload repetitive toil to machine stations while retaining human judgment and accountability.
-
-The algorithm **recurses downward** until reaching a **bottom point** where no remaining human station can be reduced to a machine station. At that point, every surviving station resists empirically (re-opening yields the exact same judgment) or represents a managed structural contradiction. 
-
-Throughout the process, a **per-layer line log** is maintained, culminating in a **Final Line Report**. The supervising intelligence authorizes the full descent via a single trigger and validates the results during a post-run review.
-
----
-
-## v0.9.2 — Structural enforcement (validated on Gemma 4 31B)
-
-Live-tested on **gemma4:31b** via Ollama Cloud, v0.9.1 still had one failure: the model produced the full descent and Final Report but marked every **Real / Descend** verdict by *rationale alone* ("it needs human judgment"), never writing the candidate machine/auto-tuned replacement the self-check demanded. A self-check *question* was not enough — Gemma 4 31B follows output *templates* faithfully, so v0.9.2 makes the candidate attempt a **mandatory template field**:
-
-- The Line Log **Open-and-Split Result** is now a 3-line block per station: `Candidate replacement(s)` → `Why it fails` → `Verdict`. A verdict with no preceding Candidate line is a FAIL — making it structurally impossible to write "Real" without first attempting a concrete replacement.
-- Primitive 5, the §3 Output Discipline, and the §6 Final Self-Audit all now forbid rationale-only verdicts and require the candidate to appear in the **visible** output (not hidden reasoning) — directly countering Gemma 4's known thinking-vs-output divergence.
-- The worked example (§4) is reformatted to the new 3-line template so few-shot teaches the exact shape.
-
-Measured: on the same problem, `Candidate` mentions went 0 → 3 and every verdict carries the 3-line structure. Factory-line vocabulary and 8-primitive structure unchanged.
-
----
-
-## v0.9.1 — Hardened for Mid-Size Instruct Models (Gemma 3 27B-class)
-
-v0.9.0 already made the skill self-contained for small models, but mid-size instruct models (notably **Gemma 3 27B**) still collapsed the run in three documented ways: (1) terse by default — they summarize away per-layer logs and skip self-checks; (2) "helpful shortcut" — they mark every station **Real** without attempting a replacement; (3) early negative constraints get dropped. v0.9.1 adds targeted fixes grounded in Gemma 3's known behavior:
-
-- **Worked mini-example** (§4) — a concrete 2-layer descent; few-shot is the single biggest lever for Gemma, which follows examples far better than prose rules.
-- **Output Discipline note** (§3) — forbids merging/skipping layers, forbids a Layer-0 bottom without proof, and makes "Real" require a named candidate replacement that fails.
-- **Strengthened self-checks** (Primitives 5b / 6 / 7) — phrased as "answer, then act; if Yes → FAIL: redo" to survive negation misreads.
-- **Final Self-Audit** (§6) — the most-dropped constraints restated as a last-line checklist (Gemma drops negative constraints placed early, so the critical ones live at the end).
-
-The factory-line vocabulary and 8-primitive structure are unchanged; this is robustness, not redesign. Design goal unchanged: works from small models up, now with fewer false bottoms on mid-size instruct models.
-
----
-
-## v0.9.0 — Spine Rebuilt (Factory Line; Self‑Contained for Small Models)
-
-Versions up to v0.8.x relied on philosophical terminology from Kant (a priori / regulative ideal), Peirce (empirical test), and Hegel (dialectic). While this "borrowed spine" worked well on large models with rich background knowledge, it failed on smaller language models that lack those conceptual foundations.
-
-Version v0.9.0 replaces that approach with a **self‑contained language** built on the **factory‑line** metaphor. Precision is now guaranteed through **each primitive’s “operation + self-check”**: the model performs the operation and answers a simple yes/no check, fixing meaning without external knowledge. The original philosophical formulation remains available in [`skills/pruner-arch/references/philosophy.md`](skills/pruner-arch/references/philosophy.md) for reference, but is not required for execution.
-
----
-
-## Core Concept — The Factory Line + 8 Primitives
-
-We model the problem as a single **factory line**. Each workstation (or "station") falls into one of three categories:
-
-- **Machine station** — deterministic (same input = same output), zero guessing or learning. Fully automatable.
-- **Auto‑tuned station** — runs automatically like a machine, but learns from data and can drift. Mostly correct, but requires monitoring. *Never mix into the machine bin.*
-- **Human‑judgment station** — requires situational reading and contextual judgment. Defined strictly by its I/O contract.
-
-**Control panel = surviving human-judgment stations.**
-**Cognitive-load minimization = minimizing the number of human seats.**
-**MVP = current line.**
-
-### The 8 Primitives (One-Line Operation + One-Line Self-Check)
-
-1. **Ideal‑product sketch** — Write the target end-state for this layer in one line, marked `[Buildability Unverified]`, then immediately test: "Does this dissolve into concrete line operations?"
-   * *Self-check*: Did you start designing the line assuming the ideal product is already real? $\rightarrow$ **FAIL**.
-2. **Contradiction check** — When specs force "A must hold" and "A must not hold" simultaneously true, it is not a "ship-once deliverable" but a **managed tension**. Hold both poles as structural limits and place a human-judgment station between them.
-   * *Self-check*: Are two conflicting requirements both mandatory "musts"? $\rightarrow$ Managed tension, not a deliverable.
-3. **Shell‑stripping** — Strip away rigid forms ("fully auto" / "fully manual") from clashing requirements, preserving only their essential values. Repetitive toil $\rightarrow$ machine station; final judgment/accountability $\rightarrow$ human-judgment station.
-   * *Self-check*: Did you discard one side's essential value entirely? $\rightarrow$ **FAIL**.
-4. **Three‑bin sort** — Sort every component into machine, auto-tuned, or human-judgment bins. Do not file auto-tuned stations into the machine bin.
-   * *Self-check*: Did you classify an auto-tuned station as a machine station? $\rightarrow$ **FAIL** (smuggles hidden drift).
-5. **Open-and-split test** — For every human-judgment station, **first write a named candidate machine/auto-tuned replacement and a one-line reason it fails** (in the visible line log). If the candidate succeeds → **fake human station** (remove it, name the replacement). If no candidate fits and it decomposes → **descend**. If no candidate fits and re-opening returns the same judgment → **real human station** (keep it). A verdict by rationale alone ("it needs human judgment") is forbidden.
-   * *Self-check*: Did you mark a station Real/Fake/Descend without a visible candidate + why-it-fails line? → **FAIL**.
-6. **Bottom point** — Declared only when every remaining human station has passed an open-and-split that **attempted a replacement** — never on impression.
-   * *Self-check*: Did you stop because "I can't think how" or because stations merely "look" human? → **FAIL** (perform an actual open-and-split on each).
-7. **Line log** — Record one entry per visited layer (sketch, three-bin result, human I/O contracts, and the 3-line open-and-split result) **before** descending. Never merge, summarize, or skip a layer.
-   * *Self-check*: Did you descend without a log entry, or merge/skip a layer? → **FAIL**.
-8. **No‑declaration rule** — Three prohibitions: ① No declaring "bottom" without an explicit open-and-split. ② No declaring "fake, remove" without naming the replacement station. ③ No line design assuming the ideal product is real.
-   * *Self-check*: Is there any declaration lacking execution proof or replacement naming? $\rightarrow$ **FAIL**.
-
-See [`SKILL.md`](skills/pruner-arch/SKILL.md) §2 for canonical text.
-
----
-
-## What It Does (4 Stages $\rightarrow$ Descent to the Bottom)
-
-When triggered, the skill executes a **full recursive descent**. It maintains a **line log** and iterates through 4 stages per layer, exploring human stations depth-first:
-
-1. **Ideal-product sketch + contradiction check + shell-stripping** — Suspend real-world constraints and write the ideal product (`[Buildability Unverified]`). Identify contradictions (managed tensions), strip rigid forms, and extract core values.
-2. **Reality friction + three-bin sort** — Confront the ideal product with reality, separating deterministic execution from contextual judgment, then sort into machine, auto-tuned, and human-judgment bins.
-3. **Human-station I/O + current line (MVP)** — Defer judgment parts to human stations defined strictly by I/O contracts. Connect the remaining components into the thinnest operational line (MVP / Control Panel).
-4. **Open-and-split + log + descend or stop** — For each human station, write a candidate machine/auto-tuned replacement + why it fails (visible). If it succeeds → remove as **fake** (name replacement). If no candidate fits and it decomposes → **descend**. If no candidate fits and irreducible → keep as **real**. Write the 3-line log per station. Descend if decomposable stations remain; otherwise, declare bottom and terminate.
-
-#### Line-Log Entry Template (Per Visited Layer)
-
-```text
-**Layer n — Ideal-Product Sketch**
-- Ideal Product (one line): … [Buildability Unverified]
-- Contradiction Check & Shell-Stripping: [No Clash | Clash (A must: … vs A must not: …)] → Essence extracted → Rebuilt as [Human Station / Limits]
-- Reality Friction: …
-- Machine Stations (deterministic, no guessing): …
-- Auto-Tuned Stations (learned/probabilistic; drifts, needs watching): …
-- Human-Judgment Stations (I/O Contracts):
-  - [B_n,1] Input: … | Output: … | Responsibility: …
-- Current Line (MVP / Control Panel): …
-- Open-and-Split Result:
-  - [B_n,1]:
-    - Candidate replacement(s) (machine/auto-tuned, or "none fits"): …
-    - Why it/they fail (one line each): …
-    - Verdict: Fake (Replaced by: …) | Real (Retained) | Descend → Layer k
-```
-
-#### Final Line Report (Deliverable)
-
-```text
----
-**[Pruner] Final Line Report — Bottom Reached at Layer N**
-
-1. Bottom Verification:
-   - All surviving human-judgment stations confirmed irreducible through explicit open-and-split testing or structural contradiction.
-   - Contradiction Limits Held: [List of managed tensions / limits].
-
-2. Discovered Control Panel (Minimal Human Interface):
-   - Real Human-Judgment Stations:
-     - [B_a,b] (Confirmed Real at Layer a) — I/O Contract: …
-   - Machine Core (Accumulated deterministic stations): …
-   - Auto-Tuned Layer (Monitored probabilistic stations): …
-
-3. Eliminated Fake Human Stations:
-   - [B_c,d] (Removed at Layer c) → Replaced by Machine/Auto-Tuned Station: [Station Name]
-
-4. Per-Layer Trace:
-   - (Complete Line Log from Layer 0 to Layer N included above)
-
-5. Post-Run Review Gate:
-   Awaiting user direction:
-   1) Confirm bottom and freeze line design.
-   2) Re-open specific station [Station ID] for deeper descent.
-```
-
----
+1. **Admit (once)** — a trigger activates the skill, but does not start a descent on an under-specified problem: if no concrete problem (a system in one line + ≥1 hard tension + an accountability question) is present, request framing first.
+2. **Sketch** — write this layer's ideal end-state in one line (`[Buildability Unverified]`). A contradiction (two musts clashing) is a **managed tension** — both poles as limits, a human station between them. Strip "fully auto / fully manual" shells to essence.
+3. **Sort** — sort every component into Machine / Auto-Tuned / Human-Judgment. (Keep auto-tuned out of the machine bin.)
+4. **Seat** — write each human station's I/O contract (Input / Output / Responsibility). Connect the rest into the current line (MVP).
+5. **Split (the core)** — for each human station, write **in the visible log** a concrete candidate replacement + a one-line reason it fails. Then: candidate succeeds → **Fake** (remove, name replacement); no candidate fits and it decomposes → **Descend**; no candidate fits and re-opens the same → **Real** (keep). Emit the layer log; descend while any station opens.
+   - **Hard gate:** any verdict (Fake/Real/Descend) without a visible candidate + why-it-fails line → redo Phase 5 for that station. (The #1 shortcut that breaks the skill.)
+6. **Report (once, at the bottom)** — emit the Final Line Report: control panel (surviving Real stations + I/O), machine core, auto-tuned layer, removed fakes (with replacements). Await review.
 
 ## Activates On
 
-`[Pruner]` · `Pruner` · `pruner` · `가지치기` · `가지치기 모드` — or when asked to design a complex problem top-down.
-
-## Strict Anti‑Patterns
-
-* **No shell rhetoric** — Buzzwords such as "synergy," "convergence," "next-gen," or "hyper-automation" cause immediate execution failure.
-* **No reifying the product** — Never treat the ideal product as real without verifying its reduction to machine stations.
-* **No false bottom** — Never declare a station "real"/"bottom" without an actual open-and-split that attempted a replacement ("I can't imagine how" is invalid). Never declare a station "fake" without naming its replacement.
-* **No rationale-only verdicts** — Every Real / Fake / Descend verdict must be preceded in the line log by a visible candidate machine/auto-tuned replacement + why it fails. "It needs human judgment" is not proof — attempt a concrete replacement first. (Validated on Gemma 4 31B, where this was the #1 shortcut.)
-* **No contradiction-only stop** — An "unbuildable" verdict from contradiction check is valid only when paired with Stage-4 empirical open-and-split testing.
-* **No descent without a log** — Every layer must be logged before proceeding to the next.
-* **No neglected human stations** — Enforce strict I/O contracts around human stations to prevent flow leaks.
-
-## In One Line (Plain Language)
-
-> *"Start from the ideal-product sketch, resolve clashing requirements by stripping to essence and rebuilding as a semi-automated line, offload all repetitive toil into machines, and discover — by deleting fake human stations — the leanest control panel that minimizes cognitive load; report it."*
+`[Prunify]` · `Prunify` · `prunify` · `가지치기` · `가지치기 모드` — or when asked to design a complex problem top-down. It does not, however, auto-run a descent on an under-specified problem: if no concrete problem is present (a system in one line + ≥1 hard tension + an accountability question), it requests framing first.
 
 ## Installation (in pi)
 
 ```bash
-pi install git:[github.com/sng2c/pruner-arch](https://github.com/sng2c/pruner-arch)
+pi install git:github.com/sng2c/prunify
 ```
 
 Or add to `~/.pi/agent/settings.json`:
@@ -179,12 +35,42 @@ Or add to `~/.pi/agent/settings.json`:
 ```json
 {
   "packages": [
-    "git:[github.com/sng2c/pruner-arch](https://github.com/sng2c/pruner-arch)"
+    "git:github.com/sng2c/prunify"
   ]
 }
 ```
 
-Trigger using `/skill:pruner-arch`, `[Pruner]`, or `가지치기`.
+Then invoke `/skill:prunify`, or type `[Prunify]` or `가지치기`.
+
+## Anti-patterns (summary)
+
+- **No shell rhetoric** — synergy / next-gen / seamless / hyper-automation.
+- **No reifying the ideal product** — never treat it as real without testing its reduction to machine stations.
+- **No false bottom** — "I can't imagine how" is not proof; a replacement must be attempted first.
+- **No rationale-only verdicts** — every verdict preceded by a visible candidate + why-it-fails. (The #1 failure v0.9.2 fixed.)
+- **No contradiction-only stop** — pair a contradiction with empirical open-and-split.
+- **No descent without a log.**
+
+## In one line
+
+> "Start from the ideal-product sketch, resolve clashing requirements by stripping to essence and rebuilding as a semi-automated line, offload all repetitive toil into machines, and discover — by deleting fake human stations — the leanest control panel that minimizes cognitive load; report it."
+
+## Package
+
+```json
+{
+  "name": "prunify",
+  "version": "0.9.4",
+  "pi": { "skills": ["./skills"] }
+}
+```
+
+## Changelog (condensed)
+
+- **v0.9.4** — Renamed the skill to **Prunify** (prune + purify/verify). Restructured the body from 8 primitives → 6 **do-next phases** (v0.9.3). Added the front-gate (Phase 1 Admit): a trigger ≠ adequate framing; request framing before descending on an under-specified problem. Repo and skill directory also renamed to `prunify` (GitHub auto-redirects the old `pruner-arch` URL).
+- **v0.9.2** — Made the candidate attempt a mandatory template field (Candidate → Why-it-fails → Verdict, 3 lines). Structurally blocks the rationale-only verdict — the #1 shortcut measured on Gemma 4 31B.
+- **v0.9.1** — Hardened for mid-size instruct models (Gemma 3 27B-class): worked example, output discipline, strengthened self-checks, final self-audit.
+- **v0.9.0** — Rebuilt the spine around the factory-line metaphor (philosophical terms → self-contained language). Precision via each primitive's "operation + self-check".
 
 ## License
 
