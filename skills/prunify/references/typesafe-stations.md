@@ -173,7 +173,7 @@ The auto-tuned station's watch program (itself Machine, its config = governance)
 
 ## 8. First run record (jev-1.13.0)
 
-Script: `~/ts-experiment/ticket-line.mjs` (plain `fetch`, one request per ticket,
+Script: `examples/typesafe-stations/ticket-line.mjs` (plain `fetch`, one request per ticket,
 4 parallel questions, Korean tickets + one English control). Results matched the
 worked example's predictions:
 
