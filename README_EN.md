@@ -60,13 +60,14 @@ Then invoke `/skill:prunify`, or type `[Prunify]` or `가지치기`.
 ```json
 {
   "name": "prunify",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "pi": { "skills": ["./skills"] }
 }
 ```
 
 ## Changelog (condensed)
 
+- **v0.9.5** — Added the TypeSafe integration reference: `references/typesafe-stations.md` (Jev judgments as the canonical Auto-Tuned seat — three sort rules, the escalation-bundle handshake, drift watch; verified against the live docs) plus runnable examples in `examples/typesafe-stations/` (first-run record; the translation-station candidate ruled Fake). No changes to the SKILL.md body.
 - **v0.9.4** — Renamed the skill to **Prunify** (prune + purify/verify). Restructured the body from 8 primitives → 6 **do-next phases** (v0.9.3). Added the front-gate (Phase 1 Admit): a trigger ≠ adequate framing; request framing before descending on an under-specified problem. Repo and skill directory also renamed to `prunify` (GitHub auto-redirects the old `pruner-arch` URL).
 - **v0.9.2** — Made the candidate attempt a mandatory template field (Candidate → Why-it-fails → Verdict, 3 lines). Structurally blocks the rationale-only verdict — the #1 shortcut measured on Gemma 4 31B.
 - **v0.9.1** — Hardened for mid-size instruct models (Gemma 3 27B-class): worked example, output discipline, strengthened self-checks, final self-audit.

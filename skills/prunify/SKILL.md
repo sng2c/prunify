@@ -1,6 +1,6 @@
 ---
 name: prunify
-version: "0.9.4"
+version: "0.9.5"
 description: "Top-down design in the factory-line picture: split a problem into machine / auto-tuned / human-judgment stations, mechanize what reduces, keep what resists, descend to the bottom — the surviving human stations are the control panel. Use when asked to design or architect top-down, or on [Prunify]/prunify/가지치기."
 metadata:
   display-name: "Prunify (Pruning Architect)"
