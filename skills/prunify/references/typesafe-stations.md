@@ -3,9 +3,15 @@
 > **This document is not required to run the skill.** Like `philosophy.md`, it is an
 > integration reference: how TypeSafe (System One / Jev: `choice` · `noul` · `score`
 > judgments) seats into the factory line. Primitive semantics follow the typesafe-ai
-> skill. HTTP shapes, model pinning,
-> limits, and pricing (§7) are **verified against the live docs** (docs.typesafe.ai;
-> `jev-1.13.0` current at write time).
+> skill. Two invocation paths, in order of preference:
+>
+> 1. **In-pi — the `pi-typesafe` extension (primary)**: call the `typesafe_evaluate`
+>    tool directly in-session. No scripts, no key handling; limits in §7a.
+> 2. **Standalone — HTTP/SDK scripts** (outside pi, CI, replay harnesses): raw
+>    `POST https://api.typesafe.ai/v1/systemone` with `TYPESAFE_API_KEY`; §7b.
+>
+> Shapes, model pinning, limits, and pricing (§7) are **verified against the live
+> docs** (docs.typesafe.ai; `jev-1.13.0` current at write time).
 
 ## 1. The sort, refined
 
@@ -17,11 +23,13 @@
 
 Three rules this seating adds to Phase 3 (Sort):
 
-1. **A Jev call is an API call, not a machine station.** The HTTP round-trip looks
-   deterministic; the *function* behind it is learned. Its drift is the model's
-   revisability (version bumps, calibration changes). Filing it as Machine is exactly
-   the smuggling `philosophy.md` warns of ("it will smuggle intelligence back into the
-   deterministic core"). Gate applies: filed as machine? → redo the sort.
+1. **A Jev call is an auto-tuned call, not a machine station** — whether it travels
+   as a `typesafe_evaluate` tool call (pi-typesafe ext) or an HTTP round-trip, the
+   transport looks deterministic; the *function* behind it is learned. Its drift is
+   the model's revisability (version bumps, calibration changes). Filing it as
+   Machine is exactly the smuggling `philosophy.md` warns of ("it will smuggle
+   intelligence back into the deterministic core"). Gate applies: filed as
+   machine? → redo the sort.
 2. **Accountability never transfers to Jev.** Typed output guarantees the interface,
    not truth. A judgment set can take over a station's *reading*; it cannot take over
    its *Responsibility* (novel cases, consequences, answerability to a person).
@@ -45,6 +53,10 @@ escalation bundle := {
   why:        <which question/level breached which threshold>
 }
 ```
+
+In-pi, the tool response already hands you three of the five fields: `typesafe_evaluate`
+returns `answers`, `model`, and `usage` — assemble `policy` and `why` in code (or in
+the log) and the bundle is complete.
 
 - Policy shapes: `noul ≥ τ` per label (noul carries **no** confidence field — the
   value itself is the signal); `choice` top-probability **and margin** over the
@@ -70,10 +82,12 @@ votes" was never concrete; a judgment-set spec is:
 candidate (auto-tuned) := judgment set spec:
   questions: [ primitive × state refs × criteria ],
   no-match outcome present for every question,
-  call shape: ONE request — questions run in parallel over the same state
-              (token budget shared with state; ~64k total, state ≤ ~32k),
+  call shape: ONE typesafe_evaluate call — all questions in one request,
+              parallel over the same state (ext limits: ≤32 questions,
+              ≤64 KiB JSON total, 20 attempts per session, no auto-retry),
   escalation policy → which Real seat (or none),
-  drift watch: pinned versioned model ID + labeled replay set
+  drift watch: pinned versioned model ID (from the response `model`) +
+               labeled replay set (pi-typesafe/calibrate)
 ```
 
 A second request is justified only when an answer is needed to fetch evidence,
@@ -129,10 +143,12 @@ The auto-tuned station's watch program (itself Machine, its config = governance)
 
 1. **Pin the versioned ID** (`jev-1.13.0`), never the `jev-latest`/`jev-preview`
    alias — an alias moves when a release ships, so answers change with no change on
-   your side: drift by design. The response's `model` field reports the versioned
-   ID that actually answered; record it in every escalation bundle (§2).
+   your side: drift by design. The tool response's `model` field reports the
+   versioned ID that actually answered; record it in every escalation bundle (§2).
 2. **Replay** a labeled set on any version bump; compare per-question accuracy and
-   calibration against the thresholds' evaluation basis.
+   calibration against the thresholds' evaluation basis. In-pi:
+   `pi-typesafe/calibrate` turns labeled cases into thresholds (AUC + sweep) and
+   ships a replay runner.
 3. **Observe** the escalation rate as the standing drift signal: creeping
    escalation = degrading recall of the judgment set; silent non-escalation on
    audited novel cases = degrading precision.
@@ -142,6 +158,9 @@ The auto-tuned station's watch program (itself Machine, its config = governance)
 ## 6. Integration-specific anti-patterns
 
 - **Jev-as-machine smuggling** — "it's just an HTTP call" → redo the Sort (§1.1).
+- **Keyless-but-enabled** — an enabled pi-typesafe ext with no usable key looks
+  exactly like a working one; gate the station on `/typesafe status` (opted-in +
+  key accepted), and treat a reached daily cap (`budget` error) like a 429.
 - **Confidence as permission** — treating high confidence as license to skip the
   accountability seat; confidence ≠ workflow correctness (§2).
 - **Mega-judgment station** — one question asked to do four stations' work; prunify
@@ -150,7 +169,29 @@ The auto-tuned station's watch program (itself Machine, its config = governance)
 - **Calibrated-therefore-Real-less** — deleting [B_i,j] because the model is
   calibrated; calibration is a posteriori and version-bound (§5).
 
-## 7. Verified against the live docs (jev-1.13.0 era)
+## 7. Invocation paths — verified (jev-1.13.0 era)
+
+### a. In-pi — the `pi-typesafe` extension (primary)
+
+- **Tool**: `typesafe_evaluate` — registered at session start, **disabled until
+  `/typesafe enable`** (headless: `PI_TYPESAFE_ENABLED=1`). Input: JSON `state`
+  (one named field per item, one question per item per dimension) + 1–32
+  questions (`type`: choice/noul/score, `instructions`, `criteria?`). Returns:
+  typed answers with probabilities, `model` (versioned ID), token usage, elapsed
+  time.
+- **Limits**: ≤32 questions and ≤64 KiB of JSON per request; **20 attempts per
+  session**; 15-second timeout; **no automatic retries** — a 429 burns an
+  attempt, so the §5 replay set must pace itself. More than 32 questions or many
+  states → SDK `evaluateAll`/`evaluateMany` (chunked, ordered, budget-aware).
+- **Key/cost**: `/typesafe login` stores the key (`~/.pi/agent/pi-typesafe/auth.json`);
+  `TYPESAFE_API_KEY` env takes precedence. `/typesafe status` = opt-in state +
+  key state + session/today counters + any reached cap. Daily caps via
+  `PI_TYPESAFE_MAX_REQUESTS_PER_DAY` / `_INPUT_TOKENS_PER_DAY` /
+  `_USD_PER_DAY`; a reached cap raises a `budget` error before submission.
+- **Not in context**: `/typesafe test` and `/typesafe playground` results stay
+  in the terminal — use them for threshold probing, never as station runs.
+
+### b. Standalone — HTTP (scripts, CI)
 
 - **Endpoint**: `POST https://api.typesafe.ai/v1/systemone` — body
   `{ state, model, questions: { id → { type, instructions, criteria? } } }`;
@@ -166,6 +207,9 @@ The auto-tuned station's watch program (itself Machine, its config = governance)
   whole judgment set (§3).
 - **Pricing/rate**: input-only pricing ($42 per Btok, output tokens free);
   ~250k tok/s and ~1,200 rpm, dynamically adjusted — expect and back off on 429s.
+
+### Both paths
+
 - **Language caveat (station-relevant)**: English is the primary training
   language; CJK (incl. Korean) is handled but not equally well — evaluate
   thresholds on Korean state content before letting an auto-tuned station act
@@ -174,7 +218,8 @@ The auto-tuned station's watch program (itself Machine, its config = governance)
 ## 8. First run record (jev-1.13.0)
 
 Script: `examples/typesafe-stations/ticket-line.mjs` (plain `fetch`, one request per ticket,
-4 parallel questions, Korean tickets + one English control). Results matched the
+4 parallel questions, Korean tickets + one English control — the §7b standalone
+path; in-pi reruns go through `typesafe_evaluate` instead). Results matched the
 worked example's predictions:
 
 - **T1 KR routine** → AUTO-ROUTE billing (urgent 0.19, value 1, novel 0.1, route

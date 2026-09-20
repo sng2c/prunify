@@ -1,6 +1,6 @@
 ---
 name: prunify
-version: "0.9.5"
+version: "0.9.6"
 description: "Top-down design in the factory-line picture: split a problem into machine / auto-tuned / human-judgment stations, mechanize what reduces, keep what resists, descend to the bottom — the surviving human stations are the control panel. Use when asked to design or architect top-down, or on [Prunify]/prunify/가지치기."
 metadata:
   display-name: "Prunify (Pruning Architect)"
@@ -30,7 +30,8 @@ Gate: any auto-tuned station filed as machine? → redo the sort (drift smuggles
 For each human station write its I/O contract: `Input` / `Output` / `Responsibility`. Connect the rest into the current line (MVP).
 
 ## Phase 5 — Split  *(the core)*
-For each human station, attempt a concrete Machine or Auto-Tuned replacement and write, **in the visible log**, the candidate plus a one-line reason it fails. Then:
+For each human station, attempt a concrete Machine or Auto-Tuned replacement and write, **in the visible log**, the candidate plus a one-line reason it fails.
+In-pi shortcut: an auto-tuned candidate with the `typesafe_evaluate` tool available (pi-typesafe ext, `/typesafe enable`) runs as ONE batched in-session call — limits & spec in `references/typesafe-stations.md` (§3, §7a). Then:
 - candidate succeeds → **Fake**: remove it, name the replacement.
 - no candidate fits and it decomposes → **Descend** to the next layer.
 - no candidate fits and re-opening returns the same judgment → **Real**: keep it.

@@ -60,13 +60,14 @@ pi install git:github.com/sng2c/prunify
 ```json
 {
   "name": "prunify",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "pi": { "skills": ["./skills"] }
 }
 ```
 
 ## 변경이력 (condensed)
 
+- **v0.9.6** — TypeSafe 실행 경로를 **pi-typesafe 익스텐션** 기준으로 전환: `references/typesafe-stations.md`가 세션 내 `typesafe_evaluate` 툴을 1순위 경로로 (1요청 배치, ≤32문항·64KiB, 20시도/세션·자동재시도 없음, `/typesafe enable` 옵트인, `/typesafe status` 게이트, 일일 캡 env, calibrate 리플레이), raw HTTP는 스탠드얼론(§7b)으로 재분류. SKILL.md Phase 5에 in-pi 라우팅 한 줄 추가. 예제 스크립트는 pi 밖 경로로 재분류 (§8 실측 기록은 보존).
 - **v0.9.5** — TypeSafe 통합 참조 추가: `references/typesafe-stations.md`(Jev 판단 = Auto-Tuned 좌석 — 정렬 규칙 3개, escalation bundle 핸드셰이크, 드리프트 감시; 라이브 문서 검증) + 실측 예제 `examples/typesafe-stations/`(첫 실행 기록, 번역 스테이션 후보 Fake 판정). SKILL.md 본문 변경 없음.
 - **v0.9.4** — 스킬 이름을 **Prunify**(prune + purify/verify)로 변경. 본문을 8 원시연산 → 6단계 **do-next phase**로 재구성(v0.9.3). front-gate(Phase 1 Admit) 명시: 트리거 ≠ framing 적격, under-specified면 하강 전 framing 요청. repo·스킬 디렉터리도 `prunify`로 변경(GitHub가 이전 `pruner-arch` URL을 자동 리다이렉트).
 - **v0.9.2** — 후보 시도를 템플릿 필수 필드로(Candidate → Why-fails → Verdict, 3줄). Gemma 4 31B 실측에서 근거-only 판정(1순위 단축경로)을 구조적으로 차단.

@@ -3,6 +3,11 @@
 `skills/prunify/references/typesafe-stations.md` 문서의 Layer 1 (Jev-seated) 라인을
 실측한 실험 스크립트. 의존성 없음 — Node ≥ 18 (전역 `fetch`)과 API 키만 있으면 됩니다.
 
+> **pi 안에서라면 이 스크립트가 필요 없습니다** — pi-typesafe 익스텐션이 설치·활성화
+> (`/typesafe enable`)돼 있으면 에이전트가 `typesafe_evaluate` 툴로 같은 판단 세트를
+> 세션 안에서 직접 실행한다 (문서 §7a). 아래 스크립트는 pi 밖 스탠드얼론 경로(§7b:
+> CI·리플레이 하네스)다.
+
 ```bash
 export TYPESAFE_API_KEY=...
 node ticket-line.mjs      # §4 worked example — 티켓 4건 × 질문 4개(1요청) → escalation bundle
